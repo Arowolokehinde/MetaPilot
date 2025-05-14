@@ -14,7 +14,7 @@ class AgentManager {
       );
       
       return agent.id;
-    } catch (error) {
+    } catch (error: any) { // Added type annotation
       logger.error(`Error creating agent for user ${userId}:`, error);
       throw error;
     }
@@ -35,7 +35,7 @@ class AgentManager {
     try {
       return await GaiaService.executeAction(
         agentId,
-        'eth_transfer',
+        'eth-transfer', // Changed from 'eth_transfer' to 'eth-transfer' to match GaiaService
         {
           recipientAddress: params.recipientAddress,
           amount: params.amount,
@@ -46,7 +46,7 @@ class AgentManager {
           privateKey: params.privateKey
         }
       );
-    } catch (error) {
+    } catch (error: any) { // Added type annotation
       logger.error(`Error executing ETH transfer:`, error);
       throw error;
     }

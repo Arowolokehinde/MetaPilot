@@ -7,7 +7,7 @@ class GaiaService {
   
   constructor() {
     this.apiKey = process.env.GAIA_API_KEY;
-    this.baseUrl = process.env.GAIA_API_URL || 'https://api.gaia.ai/v1';
+    this.baseUrl= process.env.GAIA_API_URL || 'https://api.gaia.ai/v1';
     
     if (!this.apiKey) {
       logger.warn('GAIA_API_KEY not set. Gaia AI functionality will be limited.');

@@ -65,7 +65,7 @@ export async function processETHTransferRule(transferRule: string): Promise<any>
     }
     
     return formattedCondition;
-  } catch (error) {
+  } catch (error: any) { // Added type annotation here
     logger.error(`Error processing ETH transfer rule:`, error);
     return null;
   }
