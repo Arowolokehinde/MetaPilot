@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/Layout/Navbar";
 import { ThemeProvider } from "@/components/Providers/theme-provider";
-import Footer from "@/components/Layout/Footer";
+import ChatSupport from "@/components/Shared/ChatSupport";
+import { WalletProvider } from "@/components/Providers/wallet-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,9 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
-          <Footer />
+          <WalletProvider>
+            {children}
+            <ChatSupport />
+          </WalletProvider>
         </ThemeProvider>
       </body>
     </html>

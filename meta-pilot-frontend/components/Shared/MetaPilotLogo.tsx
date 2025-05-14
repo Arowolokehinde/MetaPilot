@@ -6,9 +6,10 @@ import Link from "next/link";
 
 interface MetaPilotLogoProps {
     className?: string;
+    iconOnly?: boolean;
 }
 
-const MetaPilotLogo: React.FC<MetaPilotLogoProps> = ({ className = "" }) => {
+const MetaPilotLogo: React.FC<MetaPilotLogoProps> = ({ className = "", iconOnly }) => {
     return (
         <Link href="/" className={`flex items-center ${className}`}>
             <motion.div
@@ -69,9 +70,12 @@ const MetaPilotLogo: React.FC<MetaPilotLogoProps> = ({ className = "" }) => {
                     <line x1="15" y1="20" x2="24" y2="26.5" stroke="#3B82F6" strokeWidth="0.5" strokeDasharray="2 2" />
                 </svg>
 
-                <span className="ml-2 text-gray-900 dark:text-white text-xl md:text-2xl font-bold">
-                    <span className="text-blue-500">Meta</span>Pilot
-                </span>
+                {!iconOnly && (
+                    <span className="ml-2 text-gray-900 dark:text-white text-xl md:text-2xl font-bold">
+                        <span className="text-blue-500">Meta</span>Pilot
+                    </span>
+                )}
+
             </motion.div>
         </Link>
     );
@@ -80,98 +84,3 @@ const MetaPilotLogo: React.FC<MetaPilotLogoProps> = ({ className = "" }) => {
 export default MetaPilotLogo;
 
 
-// // components/MetaPilotLogo.tsx
-// import React from 'react';
-// import { motion } from 'framer-motion';
-
-// interface MetaPilotLogoProps {
-//     size?: 'sm' | 'md' | 'lg';
-//     textVisible?: boolean;
-// }
-
-// const MetaPilotLogo: React.FC<MetaPilotLogoProps> = ({
-//     size = 'md',
-//     textVisible = true
-// }) => {
-//     // Define size classes
-//     const sizeClasses = {
-//         sm: {
-//             container: "h-6 w-6",
-//             text: "text-sm"
-//         },
-//         md: {
-//             container: "h-8 w-8",
-//             text: "text-lg"
-//         },
-//         lg: {
-//             container: "h-12 w-12",
-//             text: "text-2xl"
-//         }
-//     };
-
-//     return (
-//         <motion.div
-//             className="flex items-center gap-2"
-//             initial={{ opacity: 0 }}
-//             animate={{ opacity: 1 }}
-//             transition={{ duration: 0.5 }}
-//         >
-//             <motion.div
-//                 className={`relative ${sizeClasses[size].container} rounded-md overflow-hidden bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-400 dark:to-indigo-600 flex items-center justify-center`}
-//                 whileHover={{
-//                     scale: 1.05,
-//                     boxShadow: "0 0 12px rgba(56, 189, 248, 0.6)"
-//                 }}
-//             >
-//                 <motion.div
-//                     className="absolute inset-0 bg-grid-white/[0.05] dark:bg-grid-white/[0.1]"
-//                     style={{
-//                         backgroundSize: "8px 8px",
-//                         backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)"
-//                     }}
-//                     initial={{ opacity: 0.5 }}
-//                     animate={{
-//                         opacity: [0.5, 0.8, 0.5],
-//                         scale: [1, 1.05, 1]
-//                     }}
-//                     transition={{
-//                         duration: 3,
-//                         repeat: Infinity,
-//                         repeatType: "reverse"
-//                     }}
-//                 />
-//                 <motion.div
-//                     className={`z-10 font-bold text-white ${sizeClasses[size].text}`}
-//                     animate={{
-//                         textShadow: ["0 0 0px #fff", "0 0 5px #38bdf8", "0 0 0px #fff"]
-//                     }}
-//                     transition={{
-//                         duration: 2,
-//                         repeat: Infinity,
-//                         repeatType: "reverse"
-//                     }}
-//                 >
-//                     MP
-//                 </motion.div>
-//             </motion.div>
-
-//             {textVisible && (
-//                 <motion.div
-//                     className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-indigo-600 dark:from-white dark:to-teal-400"
-//                     animate={{
-//                         backgroundPosition: ["0% center", "100% center"],
-//                     }}
-//                     transition={{
-//                         duration: 8,
-//                         repeat: Infinity,
-//                         repeatType: "reverse"
-//                     }}
-//                 >
-//                     MetaPilot
-//                 </motion.div>
-//             )}
-//         </motion.div>
-//     );
-// };
-
-// export default MetaPilotLogo;

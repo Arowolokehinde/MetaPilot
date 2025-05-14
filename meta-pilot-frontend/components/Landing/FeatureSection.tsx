@@ -169,7 +169,7 @@ const FeatureSection: React.FC = () => {
     };
 
     return (
-        <section className="py-12 relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-[#050e2d] dark:to-[#071236]">
+        <section id='features' className="py-12 relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-[#050e2d] dark:to-[#071236]">
             {/* Background Elements - Unchanged */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 {/* Gradient blobs */}

@@ -88,17 +88,10 @@ const Navbar: React.FC = () => {
     const navLinks: NavLink[] = [
         { name: "Home", href: "/" },
         { name: "Features", href: "#features" },
-        { name: "Tasks", href: "#tasks" },
         {
             name: "Dashboard",
             href: "/dashboard",
-            // subItems: [
-            //     { title: "User Dashboard", href: "/dashboard/user" },
-            //     { title: "Analytics", href: "/dashboard/analytics" },
-            //     { title: "Settings", href: "/dashboard/settings" },
-            // ]
         },
-        { name: "FAQ", href: "#faq" },
     ];
 
     // Animation variants
@@ -249,7 +242,7 @@ const Navbar: React.FC = () => {
                                             "inline-flex items-center px-4 py-2 font-medium  text-base relative duration-200 transition-colors",
                                             activeLink === link.href
                                                 ? "text-blue-600 dark:text-blue-400"
-                                                : "text-slate-700 dark:text-slate-300 hover:bg-transparent dark:hover:bg-slate-800/60",
+                                                : "text-slate-700 dark:text-slate-300 hover:bg-transparent",
                                             " after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 hover:after:w-full after:transition-all after:duration-300"
                                         )}
                                     >

@@ -236,12 +236,8 @@ const HowItWorksSection: React.FC = () => {
                                         <CardTitle className="text-xl text-white">
                                             {steps[activeStep].title}
                                         </CardTitle>
-                                        <CardDescription className="text-[#9CA3AF] mt-1" style={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            wordWrap: 'break-word'
-                                        }}>
-                                            {/* {steps[activeStep].description} */}
+                                        <CardDescription className="text-[#9CA3AF] mt-1">
+                                            {steps[activeStep].description}
                                         </CardDescription>
                                     </div>
                                 </div>
