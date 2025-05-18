@@ -1,55 +1,42 @@
-// contracts/scripts/deploy.ts
+// contracts/scripts/deploy-dtk.ts
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("Starting deployment...");
-
-  // Deploy delegation registry
-  console.log("Deploying DelegationRegistry...");
-  const DelegationRegistry = await ethers.getContractFactory("DelegationRegistry");
-  const delegationRegistry = await DelegationRegistry.deploy();
-  await delegationRegistry.deploymentTransaction().wait();
-  console.log("DelegationRegistry deployed to:", delegationRegistry.target);
+  // Get the deployment account
+  const [deployer] = await ethers.getSigners();
   
-  // Deploy ETH transfer executor
-  console.log("Deploying ETHTransferExecutor...");
+  console.log("Deploying DTK contracts with account:", deployer.address);
+  
+  // Deploy the EntryPoint contract (or use an existing one)
+  const entryPointAddress = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"; // Standard entry point
+  
+  // Deploy the DelegatorSetup contract
+  const DelegatorSetup = await ethers.getContractFactory("DelegatorSetup");
+  const delegatorSetup = await DelegatorSetup.deploy(entryPointAddress);
+  await delegatorSetup.deployed();
+  
+  console.log("DelegatorSetup deployed to:", delegatorSetup.address);
+  
+  // Get the addresses of the deployed components
+  const delegationManagerAddress = await delegatorSetup.getDelegationManager();
+  const hybridDelegatorImplementationAddress = await delegatorSetup.getHybridDelegatorImplementation();
+  
+  console.log("DelegationManager deployed to:", delegationManagerAddress);
+  console.log("HybridDeleGator implementation deployed to:", hybridDelegatorImplementationAddress);
+  
+  // Deploy the ETHTransferExecutor contract
   const ETHTransferExecutor = await ethers.getContractFactory("ETHTransferExecutor");
-  const ethTransferExecutor = await ETHTransferExecutor.deploy(delegationRegistry.target);
-  await ethTransferExecutor.deploymentTransaction().wait();
-  console.log("ETHTransferExecutor deployed to:", ethTransferExecutor.target);
+  const ethTransferExecutor = await ETHTransferExecutor.deploy(delegationManagerAddress);
+  await ethTransferExecutor.deployed();
   
-  // Deploy test DAO
-  console.log("Deploying TestDAO...");
-  const TestDAO = await ethers.getContractFactory("TestDAO");
-  const testDAO = await TestDAO.deploy();
-  await testDAO.deploymentTransaction().wait();
-  console.log("TestDAO deployed to:", testDAO.target);
+  console.log("ETHTransferExecutor deployed to:", ethTransferExecutor.address);
   
-  // Create test proposal in DAO
-  console.log("Creating test proposal in DAO...");
-  await testDAO.createTestProposal(
-    "Reward Distribution Proposal",
-    "This proposal suggests distributing 0.1 ETH as rewards to active community members. The rewards will be allocated based on participation metrics from the last quarter.",
-    100 // 100 blocks voting period
-  );
-  console.log("Test proposal created successfully");
+  // Deploy the caveat enforcers if needed directly
+  const allowedTargetsEnforcerAddress = await ethTransferExecutor.allowedTargetsEnforcer();
+  const valueLteEnforcerAddress = await ethTransferExecutor.valueLteEnforcer();
   
-  // Create another test proposal with keywords for AI testing
-  await testDAO.createTestProposal(
-    "Community Development Fund Allocation",
-    "This proposal recommends allocating 0.2 ETH from the treasury to fund community-led initiatives and events. The funds will be used to promote adoption and education about our project.",
-    100 // 100 blocks voting period
-  );
-  console.log("Second test proposal created successfully");
-  
-  console.log("Deployment completed successfully!");
-  
-  // Print summary of deployed contracts
-  console.log("\nDeployed Contracts Summary:");
-  console.log("============================");
-  console.log(`DelegationRegistry: ${delegationRegistry.target}`);
-  console.log(`ETHTransferExecutor: ${ethTransferExecutor.target}`);
-  console.log(`TestDAO: ${testDAO.target}`);
+  console.log("AllowedTargetsEnforcer deployed to:", allowedTargetsEnforcerAddress);
+  console.log("ValueLteEnforcer deployed to:", valueLteEnforcerAddress);
 }
 
 main()
