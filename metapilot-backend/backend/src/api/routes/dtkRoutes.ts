@@ -1,15 +1,15 @@
-// src/api/routes/dtkRoutes.ts
+// backend/src/api/routes/dtkRoutes.ts
 import express, { RequestHandler } from 'express';
-import SessionKeyService from '../../services/SessionKeyService';
-import User from '../../models/User';
 import { logger } from '../../utils/logger';
+import User from '../../models/User';
+import SessionKeyService from '../../services/SessionKeyService';
 
 const router = express.Router();
 
 /**
- * Generate a session key for delegation
+ * Create a delegator account
  */
-const generateSessionKeyHandler: RequestHandler = async (req, res) => {
+const createDelegatorAccountHandler: RequestHandler = async (req, res) => {
   try {
     const { userAddress } = req.body;
     
@@ -21,52 +21,94 @@ const generateSessionKeyHandler: RequestHandler = async (req, res) => {
       return;
     }
     
-    // Create or find user
+    // Find or create user
     let user = await User.findOne({ address: userAddress.toLowerCase() });
-    
     if (!user) {
-      // Handle user not found
-      // You can either create a new user here or return an error
-      // For this example, let's assume we want to create a new user
       user = await User.create({
         address: userAddress.toLowerCase(),
-        // Add other required fields as needed
+        preferences: {
+          network: 'sepolia'
+        }
       });
-      
-      if (!user) {
-        res.status(500).json({
-          success: false,
-          message: 'Failed to create user',
-        });
-        return;
-      }
     }
     
-    // Generate session key using SessionKeyService
-    const sessionKey = await SessionKeyService.getSessionKey(user.id);
+    // Create delegator account
+    const delegatorAddress = await SessionKeyService.createDelegatorAccount(userAddress);
     
-    if (!sessionKey) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to generate session key',
-      });
-      return;
-    }
+    // Update user with delegator address
+    user.delegatorAddress = delegatorAddress;
+    await user.save();
     
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      sessionKey,
+      delegatorAddress,
     });
   } catch (error: any) {
-    logger.error('Error generating session key:', error);
+    logger.error('Error creating delegator account:', error);
     res.status(500).json({
       success: false,
-      message: 'Error generating session key',
+      message: 'Error creating delegator account',
       error: error.message,
     });
   }
 };
 
-router.post('/generate-session-key', generateSessionKeyHandler);
+/**
+ * Create a delegation for ETH transfers
+ */
+const createETHTransferDelegationHandler: RequestHandler = async (req, res) => {
+  try {
+    const { 
+      userAddress, 
+      sessionKeyAddress, 
+      maxAmount, 
+      recipientAddress, 
+      expiryTimestamp 
+    } = req.body;
+    
+    // Validate required parameters
+    if (!userAddress || !sessionKeyAddress || !maxAmount || !recipientAddress || !expiryTimestamp) {
+      res.status(400).json({
+        success: false,
+        message: 'Missing required parameters',
+      });
+      return;
+    }
+    
+    // Find user
+    const user = await User.findOne({ address: userAddress.toLowerCase() });
+    if (!user || !user.delegatorAddress) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found or no delegator account associated',
+      });
+      return;
+    }
+    
+    // Create delegation
+    const delegation = await SessionKeyService.createETHTransferDelegation(
+      user.delegatorAddress,
+      sessionKeyAddress,
+      maxAmount,
+      recipientAddress,
+      expiryTimestamp
+    );
+    
+    res.status(201).json({
+      success: true,
+      delegation,
+    });
+  } catch (error: any) {
+    logger.error('Error creating ETH transfer delegation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating ETH transfer delegation',
+      error: error.message,
+    });
+  }
+};
+
+router.post('/delegator-account', createDelegatorAccountHandler);
+router.post('/eth-transfer-delegation', createETHTransferDelegationHandler);
 
 export default router;
